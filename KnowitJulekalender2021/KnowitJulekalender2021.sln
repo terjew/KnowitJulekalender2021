@@ -17,7 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luke6", "Luke6\Luke6.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luke7", "Luke7\Luke7.csproj", "{E1AA7888-9477-4C6A-BFEA-DB294A3C99C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luke8", "Luke8\Luke8.csproj", "{AAD01C20-D184-40B4-9C74-7DF97BEEE0AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luke8", "Luke8\Luke8.csproj", "{AAD01C20-D184-40B4-9C74-7DF97BEEE0AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luke9", "Luke9\Luke9.csproj", "{4DE788A0-ACFA-4FA5-9F97-081EFB13E034}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Utilities.csproj", "{5CE68594-05E4-411E-A187-1F3FDE69BD21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,14 @@ Global
 		{AAD01C20-D184-40B4-9C74-7DF97BEEE0AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAD01C20-D184-40B4-9C74-7DF97BEEE0AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAD01C20-D184-40B4-9C74-7DF97BEEE0AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE788A0-ACFA-4FA5-9F97-081EFB13E034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE788A0-ACFA-4FA5-9F97-081EFB13E034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE788A0-ACFA-4FA5-9F97-081EFB13E034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE788A0-ACFA-4FA5-9F97-081EFB13E034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CE68594-05E4-411E-A187-1F3FDE69BD21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CE68594-05E4-411E-A187-1F3FDE69BD21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CE68594-05E4-411E-A187-1F3FDE69BD21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CE68594-05E4-411E-A187-1F3FDE69BD21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
