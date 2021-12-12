@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace Luke11
 {
-    record NameInfo(int length, Regex[] regexes);
+    record NameInfo(int length, Regex[] regexes, HashSet<char> Set);
     public class Program
     {
         static void Main(string[] args)
@@ -26,7 +26,7 @@ namespace Luke11
             var names = File.ReadLines("names.txt")
                 .ToDictionary(n => n, n => new NameInfo(n.Length, Permutations(n)
                                                                     .Select(p => ToRegex(p))
-                                                                    .ToArray()));
+                                                                    .ToArray(), new HashSet<char>(n)));
             var lines = File.ReadLines("locked.txt");
 
             var bestKid = lines
@@ -42,8 +42,9 @@ namespace Luke11
 
         private string DecodeKid(string line, Dictionary<string, NameInfo> names)
         {
+            HashSet<char> lineset = new HashSet<char>(line);
             var matches = names
-                    .Select(kvp => new { Name = kvp.Key, Score = BestMatch(line, kvp.Value) })
+                    .Select(kvp => new { Name = kvp.Key, Score = BestMatch(line, lineset, kvp.Value) })
                     .Where(p => p.Score != int.MaxValue)
                     .OrderBy(p => p.Score)
                     .ToArray();
@@ -75,9 +76,10 @@ namespace Luke11
             return new Regex(reString);
         }
 
-        private static int BestMatch(string line, NameInfo nameInfo)
+        private static int BestMatch(string line, HashSet<char> lineset, NameInfo nameInfo)
         {
             int min = int.MaxValue;
+            if (!nameInfo.Set.IsSubsetOf(lineset)) return min;
             foreach (var re in nameInfo.regexes)
             {
                 var match = re.Match(line);
