@@ -6,7 +6,7 @@ namespace Luke13
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Løst i Unity (se eget prosjekt)");
         }
     }
 }
