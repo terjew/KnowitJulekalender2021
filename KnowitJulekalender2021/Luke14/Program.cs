@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Luke14
 {
@@ -23,5 +24,6 @@ namespace Luke14
         {
             return File.ReadLines("ordliste.txt").AsParallel().Count(l => regex.IsMatch(l));
         }
+
     }
 }
