@@ -1,0 +1,2 @@
+﻿09:52, Badeand, 1, 7, Presskanne, 2, 4, Stekepanne, 2, 5
+09:55, Bok, 2, 5, Longboard, 1, 7, Surfebrett, 10, 25
