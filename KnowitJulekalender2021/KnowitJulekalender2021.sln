@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luke21", "Luke21\Luke21.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luke19", "Luke19\Luke19.csproj", "{6CFD1AD7-D5FB-4B22-BD89-E15B2834E2AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luke22", "Luke22\Luke22.csproj", "{9F431902-6271-47DA-B4BD-F086B8595DAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{6CFD1AD7-D5FB-4B22-BD89-E15B2834E2AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CFD1AD7-D5FB-4B22-BD89-E15B2834E2AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CFD1AD7-D5FB-4B22-BD89-E15B2834E2AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F431902-6271-47DA-B4BD-F086B8595DAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F431902-6271-47DA-B4BD-F086B8595DAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F431902-6271-47DA-B4BD-F086B8595DAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F431902-6271-47DA-B4BD-F086B8595DAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
