@@ -27,7 +27,7 @@ namespace Luke19
             {
                 m.GiftsProduced[i] = new Gift()
                 {
-                    Type = tokens[i * 3],
+                    //Type = tokens[i * 3],
                     ProduceDuration = int.Parse(tokens[i * 3 + 1]),
                     WrapDuration = int.Parse(tokens[i * 3 + 2]),
                 };

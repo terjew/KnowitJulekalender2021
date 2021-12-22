@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Luke21
 {
@@ -46,7 +47,7 @@ namespace Luke21
 
     public class Program
     {
-        IEnumerable<string> Words;
+        string[] Words;
         Trie Dictionary;
         int[] MessageDigits;
 
@@ -54,7 +55,41 @@ namespace Luke21
         {
             var p = new Program();
             Console.WriteLine(p.Solve());
+            Console.WriteLine(p.SolveLarge());
             BenchmarkRunner.Run<Program>();
+        }
+
+        [Benchmark]
+        public string SolveLarge()
+        {
+            var large = File.ReadAllText("large.txt");            
+            MessageDigits = large.Select(c => c - '0').ToArray();
+            var (success, words) = ParseSentence();
+            return success ? string.Join(" ", words.Reverse()) : "No valid solution found";
+        }
+
+        [Benchmark]
+        public string SolveRandom()
+        {
+            var random = GenerateEncrypted();
+            Console.WriteLine(random);
+            MessageDigits = random.Select(c => c - '0').ToArray();
+            var (success, words) = ParseSentence();
+            return success ? string.Join(" ", words.Reverse()) : "No valid solution found";
+        }
+
+        public string GenerateEncrypted()
+        {
+            var rnd = new Random();
+            int len = 0;
+            StringBuilder sb = new StringBuilder();
+            while (len < 8000)
+            {
+                var index = rnd.Next(0, Words.Length - 1);
+                sb.Append(Words[index]);
+                len += Words[index].Length;
+            }
+            return string.Join("",sb.ToString().Select(c => Trie.ALPHABET.IndexOf(c) + 1).Select(i => i.ToString()));
         }
 
         [Benchmark]
