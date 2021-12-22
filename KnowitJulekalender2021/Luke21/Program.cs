@@ -62,7 +62,7 @@ namespace Luke21
         [Benchmark]
         public string SolveLarge()
         {
-            var large = File.ReadAllText("large.txt");            
+            var large = string.Join("", File.ReadAllLines("large.txt"));
             MessageDigits = large.Select(c => c - '0').ToArray();
             var (success, words) = ParseSentence();
             return success ? string.Join(" ", words.Reverse()) : "No valid solution found";
