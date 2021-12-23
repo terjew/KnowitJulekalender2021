@@ -1,150 +1,118 @@
-﻿using System;
+﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Luke22
 {
-    class Board
-    {
-        string[,] Pieces = new string[4,4]; //row,col
-        public string Debug => ToString();
-        public bool IsSolved =>
-            ToString() == 
-@"🎅🎅🎅🎅
-⛄⛄⛄⛄
-✨✨✨✨
-🎄🎄🎄🎄
-";
-
-        public Board(string pieces)
-        {
-            int i = 0;
-            var enumerator = StringInfo.GetTextElementEnumerator(pieces);
-            while (enumerator.MoveNext())
-            {
-                Pieces[i / 4, i % 4] = enumerator.GetTextElement();
-                i++;
-            }
-        }
-
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < 16; i++)
-            {
-                sb.Append(Pieces[i / 4, i % 4]);
-                if (i % 4 == 3) sb.AppendLine();
-            }
-            return sb.ToString();
-        }
-
-        public void MoveRow(int row, bool right)
-        {
-            int start = right ? 0 : 3;
-            int end = right ? 3 : 0;
-            var tmp = Pieces[row, end];
-            if (right) for (int col = 3; col > 0; col--) Pieces[row, col] = Pieces[row, col - 1];
-            else for (int col = 0; col < 3; col++) Pieces[row, col] = Pieces[row, col + 1];
-            Pieces[row, start] = tmp;
-        }
-
-        public void MoveColumn(int col, bool down)
-        {
-            int start = down ? 0 : 3;
-            int end = down ? 3 : 0;
-            var tmp = Pieces[end, col];
-            if (down) for (int row = 3; row > 0; row--) Pieces[row, col] = Pieces[row - 1, col];
-            else for (int row = 0; row < 3; row++) Pieces[row, col] = Pieces[row + 1, col];
-            Pieces[start, col] = tmp;
-        }
-
-        public void Move(byte move)
-        {
-            //0bRFNN 
-            int no = move & 0b0011;
-            bool row = (move & 0b1000) != 0;
-            bool forward = (move & 0b0100) != 0;
-            if (row) MoveRow(no, forward);
-            else MoveColumn(no, forward);
-        }
-        
-        public byte InverseMove(byte move)
-        {
-            bool forward = (move & 0b0100) != 0;
-            if (forward) return (byte)(move & 0b1011);
-            else return (byte)(move | 0b0100);
-        }
-    }
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
             //Emoji console output requires Windows Terminal, does not work in powershell or cmd.exe
-            //SolveExample();
-            Console.WriteLine(Solve());
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            var solver = new Solver();
+            Console.WriteLine(solver.SolveExample());
+            Console.WriteLine(solver.SolveBidirectional());
+            BenchmarkRunner.Run<Solver>();
         }
 
-        static int Solve()
+    }
+    public class Solver { 
+
+        [Benchmark]
+        public int SolveBidirectional()
         {
             var boards = File.ReadAllLines("boards.txt").Select(l => new Board(l));
+            Stopwatch sw = Stopwatch.StartNew();
+            int maxDepth = 6;
+            var distancesFromSolved = GetDistances(Board.Solved(), maxDepth);
             int total = 0;
             foreach(var board in boards)
             {
-                int best = SolveRecursive(board, new Stack<byte>(), 7);
-                while (true)
-                {
-                    var count = SolveRecursive(board, new Stack<byte>(), best - 1);
-                    if (count == 0) break;
-                    best = count;
-                }
-                Console.WriteLine(best);
-                total += best;
+                int moves = SearchBFS(board, distancesFromSolved);
+                total += moves;
             }
             return total;
         }
-        static bool SolveExample()
+
+        public int SolveExample()
         {
-            var board = new Board("🎅🎅⛄🎄✨⛄⛄🎅🎄✨✨⛄🎅🎄🎄✨");
-            int best = SolveRecursive(board, new Stack<byte>(), 10);
-            while (true)
-            {
-                var count = SolveRecursive(board, new Stack<byte>(), best - 1);
-                if (count == 0) break;
-                best = count;
-            }
-            Console.WriteLine(best);
-            return board.IsSolved;
+            var b = new Board("🎅🎅⛄🎄✨⛄⛄🎅🎄✨✨⛄🎅🎄🎄✨");
+            Console.WriteLine(b);
+            b.Move(false, 3, false);
+            b.Move(true, 0, true);
+            b.Move(true, 0, true);
+            b.Move(false, 0, true);
+            Console.WriteLine(b);
+            return SearchBFS(new Board("🎅🎅⛄🎄✨⛄⛄🎅🎄✨✨⛄🎅🎄🎄✨"));
         }
 
-        static int SolveRecursive(Board board, Stack<byte> moves, int max)
+        internal static Dictionary<Board, byte> GetDistances(Board startBoard, int maxDepth)
         {
-            byte? back = moves.Count > 0 ? board.InverseMove(moves.Peek()) : null;
-            if (board.IsSolved)
+            var node = new SearchNode(0, startBoard);
+            Queue<SearchNode> queue = new Queue<SearchNode>();
+            Dictionary<Board, byte> known = new Dictionary<Board, byte>();
+            known.Add(startBoard, 0);
+            queue.Enqueue(node);
+
+            while (queue.Count > 0)
             {
-                Console.WriteLine("Found solution!");
-                Console.WriteLine(string.Join("->", moves));
-                return moves.Count;
-            }
-            if (moves.Count >= max)
-            {
-                return 0;
-            }
-            for (byte move = 0; move < 16; move++)
-            {
-                if (move != back)
+                var current = queue.Dequeue();
+                if (current.Gen > maxDepth - 1) continue;
+                foreach (var edge in current.GetEdges())
                 {
-                    board.Move(move);
-                    moves.Push(move);
-                    int count = SolveRecursive(board, moves, max);
-                    board.Move(board.InverseMove(move));
-                    moves.Pop();
-                    if (count > 0) return count;
+                    if (!known.ContainsKey(edge.Board))
+                    {
+                        known.Add(edge.Board, edge.Gen);
+                        queue.Enqueue(edge);
+                    }
+                }
+            }
+            return known;
+        }
+
+        internal static int SearchBFS(Board start, Dictionary<Board, byte> targets)
+        {
+            if (targets.ContainsKey(start))
+            {
+                return targets[start];
+            }
+            var node = new SearchNode(0, start);
+            Queue<SearchNode> queue = new Queue<SearchNode>();
+            HashSet<Board> known = new HashSet<Board>();
+            queue.Enqueue(node);
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                known.Add(current.Board);
+                foreach (var edge in current.GetEdges())
+                {
+                    if (targets.ContainsKey(edge.Board))
+                    {
+                        return targets[edge.Board] + edge.Gen;
+                    }
+
+                    if (!known.Contains(edge.Board))
+                    {
+                        known.Add(edge.Board);
+                        queue.Enqueue(edge);
+                    }
                 }
             }
             return 0;
         }
+
+
+        internal static int SearchBFS(Board board)
+        {
+            Dictionary<Board, byte> targets = new Dictionary<Board, byte>();
+            targets.Add(Board.Solved(), 0);
+            return SearchBFS(board, targets);
+        }
+
     }
 }
